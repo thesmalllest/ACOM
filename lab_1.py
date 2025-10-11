@@ -182,19 +182,13 @@ def task8():
 
         if r >= g and r >= b:
             color = (0, 0, 255)   # красный
-            color_name = "Red"
         elif g >= r and g >= b:
             color = (0, 255, 0)   # зелёный
-            color_name = "Green"
         else:
             color = (255, 0, 0)   # синий
-            color_name = "Blue"
 
         cv2.rectangle(frame, (x - 100, y - 15), (x + 100, y + 15), color, -1)
         cv2.rectangle(frame, (x - 15, y - 100), (x + 15, y + 100), color, -1)
-
-        cv2.putText(frame, color_name, (x - 60, y - 120),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
 
         cv2.imshow('Color Cross', frame)
 
@@ -222,12 +216,12 @@ def camo_camera():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    show_image()       
+    # show_image()       
     # play_video()     
     # copy_video_to_file()   
     # show_color_and_hsv()  
     # draw_cross_from_cam()
     # record_and_play_cam()
     # task8()
-    # camo_camera()
+    camo_camera()
 
