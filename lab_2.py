@@ -94,7 +94,47 @@ def morphology_on_red():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+# task 4
+def find_moments_and_area():
+    image = cv2.imread("cvetok.jpg")
+    image = cv2.resize(image, (600, 400))
+
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    lower_red1 = (0, 120, 70)
+    upper_red1 = (10, 255, 255)
+    lower_red2 = (170, 120, 70)
+    upper_red2 = (180, 255, 255)
+
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    red_mask = cv2.bitwise_or(mask1, mask2)
+
+    kernel = np.ones((3, 3), np.uint8)
+    red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_OPEN, kernel)
+    red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_CLOSE, kernel)
+
+    moments = cv2.moments(red_mask)
+
+    area = moments['m00']               
+    if area != 0:
+        cx = int(moments['m10'] / area)  # центр X
+        cy = int(moments['m01'] / area)  # центр Y
+    else:
+        cx, cy = 0, 0
+
+    print(f"Площадь объекта: {area:.2f} пикселей²")
+    print(f"Центр объекта: X={cx}, Y={cy}")
+
+    result = cv2.bitwise_and(image, image, mask=red_mask)
+    cv2.circle(result, (cx, cy), 5, (0, 255, 0), -1)
+
+    cv2.imshow("Red Object with Center", result)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 if __name__ == "__main__":
     # pic_from_cam_to_hsv()
     # filter_red_from_image()
-    morphology_on_red()
+    # morphology_on_red()
+    find_moments_and_area()
