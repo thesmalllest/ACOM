@@ -57,6 +57,44 @@ def filter_red_from_image():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+# task 3
+def morphology_on_red():
+
+    image = cv2.imread("cvetok.jpg")
+    image = cv2.resize(image, (600, 400))
+
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    lower_red1 = (0, 120, 70)
+    upper_red1 = (10, 255, 255)
+    lower_red2 = (170, 120, 70)
+    upper_red2 = (180, 255, 255)
+
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+
+    red_mask = cv2.bitwise_or(mask1, mask2)
+
+    kernel = np.ones((5, 5), np.uint8)
+
+    # Открытие = erode + dilate
+    opening = cv2.morphologyEx(red_mask, cv2.MORPH_OPEN, kernel)
+
+    # Закрытие = dilate + erode
+    closing = cv2.morphologyEx(red_mask, cv2.MORPH_CLOSE, kernel)
+
+    red_opened = cv2.bitwise_and(image, image, mask=opening)
+    red_closed = cv2.bitwise_and(image, image, mask=closing)
+
+    cv2.imshow("Original", image)
+    cv2.imshow("Red Mask", red_mask)
+    cv2.imshow("Opening (erode->dilate)", red_opened)
+    cv2.imshow("Closing (dilate->erode)", red_closed)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 if __name__ == "__main__":
     # pic_from_cam_to_hsv()
-    filter_red_from_image()
+    # filter_red_from_image()
+    morphology_on_red()
