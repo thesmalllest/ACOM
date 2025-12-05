@@ -1,7 +1,47 @@
 import cv2
 import numpy as np
 
-# task 1 2
+# task 1 2 3
+def non_max_suppression(magnitude, angle):
+    H, W = magnitude.shape
+    suppressed = np.zeros((H, W), dtype=np.float32)
+
+    angle = np.rad2deg(angle) % 180
+
+    for y in range(1, H - 1):
+        for x in range(1, W - 1):
+            q = 255
+            r = 255
+
+            # grad direction
+            ang = angle[y, x]
+
+            # 0 deg (right-left)
+            if (0 <= ang < 22.5) or (157.5 <= ang <= 180):
+                q = magnitude[y, x + 1]
+                r = magnitude[y, x - 1]
+
+            # 45 grad 
+            elif 22.5 <= ang < 67.5:
+                q = magnitude[y + 1, x - 1]
+                r = magnitude[y - 1, x + 1]
+
+            # 90 deg (up-down)
+            elif 67.5 <= ang < 112.5:
+                q = magnitude[y + 1, x]
+                r = magnitude[y - 1, x]
+
+            # 135 grad 
+            elif 112.5 <= ang < 157.5:
+                q = magnitude[y - 1, x - 1]
+                r = magnitude[y + 1, x + 1]
+
+            # saving only loc max
+            if magnitude[y, x] >= q and magnitude[y, x] >= r:
+                suppressed[y, x] = magnitude[y, x]
+
+    return suppressed
+
 def process_image(path):
     img = cv2.imread(path)
 
@@ -18,15 +58,15 @@ def process_image(path):
     # grad angle
     angle = np.arctan2(grad_y, grad_x)
 
-    print("Grad matrix:\n", magnitude)
-    print("\nGrad angle matrix:\n", angle)
+    # supression
+    suppressed = non_max_suppression(magnitude, angle)
 
     mag_norm = cv2.normalize(magnitude, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-    ang_norm = cv2.normalize(angle, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+    sup_norm = cv2.normalize(suppressed, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
     cv2.imshow("B&W", gray)
     cv2.imshow("Grad magnitute", mag_norm)
-    cv2.imshow("Grad angle", ang_norm)
+    cv2.imshow("After Non-Max Suppression", sup_norm)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
