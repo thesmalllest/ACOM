@@ -42,7 +42,7 @@ def non_max_suppression(magnitude, angle):
 
     return suppressed
 
-def double_threshold(img, low_ratio=0.05, high_ratio=0.15):
+def double_threshold(img, low_ratio=0.08, high_ratio=0.22):
     high = img.max() * high_ratio
     low = high * low_ratio
 
@@ -80,7 +80,7 @@ def process_image(path):
     img = cv2.imread(path)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 
     # Sobel grad
     grad_x = cv2.Sobel(blurred, cv2.CV_64F, 1, 0, ksize=3)  # Derivative X
